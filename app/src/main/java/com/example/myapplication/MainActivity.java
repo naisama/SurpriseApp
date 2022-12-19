@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     Button givePresentsButton; //forward
 
-    Button abortMissionButton; //Stop
+    Button forwardButton; //Stop
+    Button backwardButton;
 
 
     //Speed
@@ -78,7 +79,8 @@ public class MainActivity extends AppCompatActivity {
 
         givePresentsButton = (Button) findViewById(R.id.givePresentButton);
 
-        abortMissionButton = (Button) findViewById(R.id.abortMissionButton);
+        forwardButton = (Button) findViewById(R.id.forwardsButton);
+        backwardButton = (Button) findViewById(R.id.backwardButton);
 
         speedLabel = (TextView) findViewById(R.id.speedText);
         increaseSpeed = (Button) findViewById(R.id.incSpeedButton);
@@ -93,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
         disconnectButton.setOnClickListener(v -> disconnect());
         givePresentsButton.setOnClickListener(v -> setGivePresentsButton());
 
-        abortMissionButton.setOnClickListener(v -> stop());
+        forwardButton.setOnClickListener(v -> forward());
+        backwardButton.setOnClickListener(v -> backward());
 
         increaseSpeed.setOnClickListener(v -> increaseSpeed());
         decreaseSpeed.setOnClickListener(v -> decreaseSpeed());
@@ -244,17 +247,31 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void stop() {
+    public void forward() {
         try {
-            String tmpStr = "s";
+            String tmpStr = "f";
             byte[] bytes = tmpStr.getBytes();
             if (outputStream != null) outputStream.write(bytes);
             if (outputStream != null) outputStream.flush();
-            Log.d("MyFirstApp", "Abort mission sent");
-            statusLabel.setText("Aborting mission");
+            Log.d("MyFirstApp", "Forward sent");
+            statusLabel.setText("Forward");
 
         } catch (Exception e) {
-            Log.e("MyFirstApp", "STOP ERROR:" + e);
+            Log.e("MyFirstApp", "FORWARD ERROR:" + e);
+        }
+    }
+
+    public void backward() {
+        try {
+            String tmpStr = "b";
+            byte[] bytes = tmpStr.getBytes();
+            if (outputStream != null) outputStream.write(bytes);
+            if (outputStream != null) outputStream.flush();
+            Log.d("MyFirstApp", "Backward sent");
+            statusLabel.setText("Backward");
+
+        } catch (Exception e) {
+            Log.e("MyFirstApp", "BACKWARD ERROR:" + e);
         }
     }
 
