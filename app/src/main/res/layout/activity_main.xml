@@ -4,113 +4,69 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/holo_red_dark"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/givePresentButton"
-        android:layout_width="158dp"
-        android:layout_height="81dp"
-        android:layout_marginStart="128dp"
-        android:layout_marginTop="36dp"
-        android:text="GIVE PRESENTS"
-        android:textColor="#FFFFFF"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:backgroundTint="#129717"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.064"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.035" />
-
-    <Button
-        android:id="@+id/disconnectButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="DISCONNECT"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:backgroundTint="#FBFBFB"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.885"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.909" />
-
-    <Button
         android:id="@+id/connectButton"
-        android:layout_width="136dp"
-        android:layout_height="48dp"
+        android:layout_width="160dp"
+        android:layout_height="101dp"
         android:onClick="onClickConnect"
-        android:text="CONNECT"
+        android:text="CONNECT TO SURPRISE BOX"
         android:textColor="#000000"
         android:textSize="18sp"
         android:textStyle="bold"
         app:backgroundTint="#8BC34A"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintHorizontal_bias="0.135"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.909" />
+        app:layout_constraintVertical_bias="0.912" />
 
     <Button
-        android:id="@+id/forwardsButton"
-        android:layout_width="165dp"
-        android:layout_height="77dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="50dp"
-        android:text="FORWARD"
-        android:textAlignment="gravity"
-        android:textColor="@color/black"
-        android:textSize="16sp"
+        android:id="@+id/disconnectButton"
+        android:layout_width="160dp"
+        android:layout_height="101dp"
+        android:text="DISCONNECT"
+        android:textColor="#000000"
+        android:textSize="18sp"
         android:textStyle="bold"
-        app:backgroundTint="#FFFFFF"
+        app:backgroundTint="#F44336"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.629"
+        app:layout_constraintHorizontal_bias="0.884"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.266" />
+        app:layout_constraintVertical_bias="0.912" />
 
-    <Button
-        android:id="@+id/backwardButton"
-        android:layout_width="165dp"
-        android:layout_height="77dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="50dp"
-        android:text="BACKWARD"
-        android:textAlignment="gravity"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:backgroundTint="#FFFFFF"
+    <ImageButton
+        android:id="@+id/deliverGiftsButton"
+        android:layout_width="203dp"
+        android:layout_height="208dp"
+        android:background="#00FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.629"
+        app:layout_constraintHorizontal_bias="0.514"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.408" />
+        app:layout_constraintVertical_bias="0.03"
+        app:srcCompat="@drawable/tree3" />
 
     <TextView
-        android:id="@+id/speedText"
-        android:layout_width="93dp"
-        android:layout_height="40dp"
-        android:text="5"
-        android:textAlignment="center"
-        android:textColor="@color/white"
-        android:textSize="24sp"
+        android:id="@+id/setSpeedText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set delivery speed"
+        android:textColor="#BC1509"
+        android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.566"
+        app:layout_constraintHorizontal_bias="0.514"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.562" />
+        app:layout_constraintVertical_bias="0.343" />
 
     <Button
         android:id="@+id/incSpeedButton"
@@ -118,46 +74,47 @@
         android:layout_height="45dp"
         android:text="+"
         android:textAlignment="gravity"
+        android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:backgroundTint="#FF5722"
+        app:backgroundTint="#FFEB3B"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.77"
+        app:layout_constraintHorizontal_bias="0.71"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.559" />
+        app:layout_constraintVertical_bias="0.392" />
+
+    <TextView
+        android:id="@+id/speedText"
+        android:layout_width="93dp"
+        android:layout_height="40dp"
+        android:text="5"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.396" />
 
     <TextView
         android:id="@+id/statusLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Welcome to the app!"
-        android:textColor="#F3EFEF"
+        android:textColor="#838383"
         android:textSize="20sp"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.573"
+        app:layout_constraintHorizontal_bias="0.543"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.725" />
-
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="196dp"
-        android:layout_height="23dp"
-        android:text="Speed range [1-9]"
-        android:textAlignment="center"
-        android:textColor="#FFFDFD"
-        android:textSize="18sp"
-        android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.609"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.61" />
+        app:layout_constraintVertical_bias="0.468" />
 
     <Button
         android:id="@+id/decSpeedButton"
@@ -165,14 +122,55 @@
         android:layout_height="45dp"
         android:text="-"
         android:textAlignment="gravity"
+        android:textColor="@color/black"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:backgroundTint="#1A6C1D"
+        app:backgroundTint="#2196F3"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.352"
+        app:layout_constraintHorizontal_bias="0.292"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.559" />
+        app:layout_constraintVertical_bias="0.392" />
+
+    <TextView
+        android:id="@+id/setPlatformPosText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set delivery platform position"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.551" />
+
+    <ImageButton
+        android:id="@+id/forwardsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.254"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.685"
+        app:srcCompat="@drawable/forward1" />
+
+    <ImageButton
+        android:id="@+id/backwardButton"
+        android:layout_width="124dp"
+        android:layout_height="109dp"
+        android:background="#00FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.773"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.686"
+        app:srcCompat="@drawable/backward1" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

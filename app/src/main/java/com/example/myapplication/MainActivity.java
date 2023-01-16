@@ -17,8 +17,8 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,13 +31,13 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    //TODO indicar a que conectarse
-    private final String bluetoothDevice = "ESP32test";
+    final public String TAG_APP = "Surprise App";
 
-    private BluetoothDevice robotis = null;
-
-    public static Boolean bluetoothActive = false;
-    private ArrayList<BluetoothDevice> deviceList = new ArrayList<BluetoothDevice>();
+    //Request codes
+    private static final int REQUEST_ENABLE_BT = 1;
+    private static final int REQUEST_SELECT_DEVICE = 2;
+    private static final int RC_LOCATION = 3;
+    private static final int REQUEST_CAMERA = 4;
 
     //General
     TextView statusLabel;
@@ -47,10 +47,10 @@ public class MainActivity extends AppCompatActivity {
     Button connectButton;
     Button disconnectButton;
 
-    Button givePresentsButton; //forward
+    ImageButton deliverGiftsButton;
 
-    Button forwardButton; //Stop
-    Button backwardButton;
+    ImageButton forwardButton;
+    ImageButton backwardButton;
 
 
     //Speed
@@ -61,10 +61,17 @@ public class MainActivity extends AppCompatActivity {
 
 
     //Bluetooth
-    BluetoothAdapter bluetooth;
+    /*BluetoothAdapter bluetooth;
+    BluetoothSocket btSocket;
+    private InputStream inputStream;
+    private OutputStream outputStream;*/
+
+    BluetoothAdapter bluetoothAdapter;
+    BluetoothDevice bluetoothDevice;
     BluetoothSocket btSocket;
     private InputStream inputStream;
     private OutputStream outputStream;
+    boolean bluetoothActive = false;
 
 
 
@@ -77,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
         connectButton = (Button) findViewById(R.id.connectButton);
         disconnectButton = (Button) findViewById(R.id.disconnectButton);
 
-        givePresentsButton = (Button) findViewById(R.id.givePresentButton);
+        deliverGiftsButton = (ImageButton) findViewById(R.id.deliverGiftsButton);
 
-        forwardButton = (Button) findViewById(R.id.forwardsButton);
-        backwardButton = (Button) findViewById(R.id.backwardButton);
+        forwardButton = (ImageButton) findViewById(R.id.forwardsButton);
+        backwardButton = (ImageButton) findViewById(R.id.backwardButton);
 
         speedLabel = (TextView) findViewById(R.id.speedText);
         increaseSpeed = (Button) findViewById(R.id.incSpeedButton);
@@ -89,11 +96,12 @@ public class MainActivity extends AppCompatActivity {
         statusLabel = (TextView) findViewById(R.id.statusLabel);
 
         //BLUETOOTH CONFIG
-        bluetooth = BluetoothAdapter.getDefaultAdapter();
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
         //Action listeners association
+        connectButton.setOnClickListener(v -> connectBT());
         disconnectButton.setOnClickListener(v -> disconnect());
-        givePresentsButton.setOnClickListener(v -> setGivePresentsButton());
+        deliverGiftsButton.setOnClickListener(v -> deliverGiftsButton());
 
         forwardButton.setOnClickListener(v -> forward());
         backwardButton.setOnClickListener(v -> backward());
@@ -109,103 +117,50 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void onClickConnect(View view) {
+    public void connectBT() {
+
         statusLabel.setText("Connect pressed");
 
-        if (bluetooth.isEnabled()) {
+        if (bluetoothAdapter.isEnabled()) {
             bluetoothActive = true;
-            String address = bluetooth.getAddress();
-            String name = bluetooth.getName(); //Mostramos la datos en pantalla (The information is shown in the screen)
-            Toast.makeText(getApplicationContext(), "Bluetooth ENABLED:" + name + ":" + address, Toast.LENGTH_SHORT).show();
-            startDiscovery();
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                //
+            }
+            String address = bluetoothAdapter.getAddress();
+            String name = bluetoothAdapter.getName();
+            //Mostramos la datos en pantalla
+            Toast.makeText(this, "Bluetooth ENABLED:" + name + ":" + address, Toast.LENGTH_SHORT).show();
+            //startDiscovery();
+            statusLabel.setText("Connecting...");
+            Intent intent = new Intent(MainActivity.this, DiscoveredBluetoothDevicesActivity.class);
+            startActivityForResult(intent, REQUEST_SELECT_DEVICE);
+
+
         } else {
             bluetoothActive = false;
-            //Toast.makeText(getApplicationContext(),"Bluetooth NOT enabled", Toast.LENGTH_SHORT).show();
-            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), 1);
+            Toast.makeText(this, "Bluetooth NOT enabled", Toast.LENGTH_SHORT).show();
+            startActivityForResult(new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE), REQUEST_ENABLE_BT);
         }
-    }
 
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 1) //Bluetooth permission request code
-            if (resultCode == RESULT_OK) {
-                bluetoothActive = true;
-                Toast.makeText(getApplicationContext(), "User Enabled Bluetooth", Toast.LENGTH_SHORT).show();
-            } else {
-                bluetoothActive = false;
-                Toast.makeText(getApplicationContext(), "User Did not enable Bluetooth", Toast.LENGTH_SHORT).show();
-            }
-    }
-
-    private void startDiscovery() {
-        if (bluetoothActive) { //We delete the previous device list
-            deviceList.clear();
-            //Activate an Android Intent to notify when a device is found
-            // NOTE: <<discoveryResult>> is a << callback >> class that we will describe in the next step
-            registerReceiver(discoveryResult, new IntentFilter(BluetoothDevice.ACTION_FOUND));
-            //We put the bluetooth adapter in <<Discovery>> mode
-            checkBTPermissions();
-            bluetooth.startDiscovery();
-        }
-    }
-
-    BroadcastReceiver discoveryResult = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //Guardamos el nombre del dispositivo descubierto
-            String remoteDeviceName = intent.getStringExtra(BluetoothDevice.EXTRA_NAME);
-            //Guardamos el objeto Java del dispositivo descubierto, para poder conectar.
-            BluetoothDevice remoteDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-            //Leemos la intensidad de la radio con respecto a este dispositivo bluetooth
-            int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI, Short.MIN_VALUE);
-            //Guardamos el dispositivo encontrado en la lista
-            deviceList.add(remoteDevice);
-            //Mostramos el evento en el Log.
-            Log.d("MyFirstApp", "Discovered " + remoteDeviceName);
-            Log.d("MyFirstApp", "RSSI " + rssi + "dBm");
-
-            if (remoteDeviceName != null && remoteDeviceName.equals(bluetoothDevice)) { //TODO comprobar que funciona
-                Log.d("MyFirstApp", "Discovered " + bluetoothDevice + ":connecting");
-                connect(remoteDevice);
-            }
-        }
-    };
-
-    public void checkBTPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            switch (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                case PackageManager.PERMISSION_DENIED:
-                    if (ContextCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        this.requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1001);
-                    }
-                    break;
-                case PackageManager.PERMISSION_GRANTED:
-                    break;
-            }
-        }
     }
 
     protected void connect(BluetoothDevice device) {
         try {
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                //return;
             }
             btSocket = device.createRfcommSocketToServiceRecord(UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"));
+            Log.d(TAG_APP, "Socket: " + btSocket + " name: " + btSocket.getRemoteDevice().getName());
+            Log.d(TAG_APP, "State socket: " + btSocket);
             btSocket.connect();
-            Log.d("MyFirstApp", "Client connected");
+            Log.d(TAG_APP, "Client connected");
             inputStream = btSocket.getInputStream();
             outputStream = btSocket.getOutputStream();
 
-            statusLabel.setText(String.format("Connected to %s successfully.", bluetoothDevice));
-            connectButton.setEnabled(false);
-            disconnectButton.setEnabled(true);
+            statusLabel.setText(String.format("Connected to %s successfully.", bluetoothDevice.getName()));
 
         }catch (Exception e) {
             Log.e("ERROR: connect", ">>", e);
@@ -214,14 +169,14 @@ public class MainActivity extends AppCompatActivity {
 
     protected void disconnect() {
         statusLabel.setText("Disconnect pressed");
-        if (bluetooth != null && bluetooth.isEnabled()) {
+        if (bluetoothAdapter != null && bluetoothAdapter.isEnabled()) {
             if (btSocket != null && btSocket.isConnected()) {
                 try {
                     btSocket.close();
                     connectButton.setEnabled(true);
                     disconnectButton.setEnabled(false);
                     statusLabel.setText(String.format("Disconnected succesfully from %s", bluetoothDevice));
-                    Log.d("MyFirstApp", "Client disconnected");
+                    Log.d(TAG_APP, "Client disconnected");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -229,20 +184,55 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Listeners methods
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (requestCode == REQUEST_ENABLE_BT) {
+            if (resultCode == RESULT_OK) {
+                bluetoothActive = true;
+                Toast.makeText(this, "User Enabled Bluetooth", Toast.LENGTH_SHORT).show();
+            } else {
+                // El Bluetooth no se ha activado
+                bluetoothActive = false;
+                Toast.makeText(this, "User Did not enable Bluetooth", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        } else if (requestCode == REQUEST_SELECT_DEVICE) {
+            if (resultCode == RESULT_OK) {
+                // Se ha seleccionado un dispositivo Bluetooth
+                bluetoothDevice = intent.getParcelableExtra("BTdevice");
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO:Consider calling
+                }
+                Toast.makeText(this, "Device selected: " + bluetoothDevice.getName(), Toast.LENGTH_SHORT).show();
+                // Crea el socket Bluetooth con el dispositivo seleccionado
+                statusLabel.setText("Connecting to " + bluetoothDevice.getName());
+                connect(bluetoothDevice);
+            } else {
+                Toast.makeText(this, "No device selected", Toast.LENGTH_SHORT).show();
+                statusLabel.setText("No device selected");
+            }
+        }
+    }
 
 
-    public void setGivePresentsButton() {
+
+
+
+    //Action methods
+
+
+    public void deliverGiftsButton() {
         try {
             speed = Integer.parseInt(speedLabel.getText().toString());
             String tmpStr = "a";
             byte bytes[] = tmpStr.getBytes();
             if (outputStream != null) outputStream.write(bytes);
             if (outputStream != null) outputStream.flush();
-            Log.d("MyFirstApp", "Petition sent");
+            Log.d(TAG_APP, "Petition sent");
             statusLabel.setText("Presents are coming!");
         } catch (Exception e) {
-            Log.e("MyFirstApp", "GIVE PRESENTS ERROR:" + e);
+            Log.e(TAG_APP, "GIVE PRESENTS ERROR:" + e);
         }
     }
 
@@ -253,11 +243,11 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = tmpStr.getBytes();
             if (outputStream != null) outputStream.write(bytes);
             if (outputStream != null) outputStream.flush();
-            Log.d("MyFirstApp", "Forward sent");
+            Log.d(TAG_APP, "Forward sent");
             statusLabel.setText("Forward");
 
         } catch (Exception e) {
-            Log.e("MyFirstApp", "FORWARD ERROR:" + e);
+            Log.e(TAG_APP, "FORWARD ERROR:" + e);
         }
     }
 
@@ -267,11 +257,11 @@ public class MainActivity extends AppCompatActivity {
             byte[] bytes = tmpStr.getBytes();
             if (outputStream != null) outputStream.write(bytes);
             if (outputStream != null) outputStream.flush();
-            Log.d("MyFirstApp", "Backward sent");
+            Log.d(TAG_APP, "Backward sent");
             statusLabel.setText("Backward");
 
         } catch (Exception e) {
-            Log.e("MyFirstApp", "BACKWARD ERROR:" + e);
+            Log.e(TAG_APP, "BACKWARD ERROR:" + e);
         }
     }
 
@@ -281,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (speed < 9) speed++;
         else {
-            Log.d("MyFirstApp", "Maximum speed reached");
+            Log.d(TAG_APP, "Maximum speed reached");
             Toast.makeText(getApplicationContext(), "Maximum speed reached", Toast.LENGTH_SHORT).show();
         }
 
@@ -295,7 +285,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (speed > 1) speed--;
         else {
-            Log.d("MyFirstApp", "Minimum speed reached");
+            Log.d(TAG_APP, "Minimum speed reached");
             Toast.makeText(getApplicationContext(), "Minimun speed reached", Toast.LENGTH_SHORT).show();
         }
 
