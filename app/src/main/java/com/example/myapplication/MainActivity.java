@@ -60,11 +60,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     //Bluetooth
-    /*BluetoothAdapter bluetooth;
-    BluetoothSocket btSocket;
-    private InputStream inputStream;
-    private OutputStream outputStream;*/
-
     BluetoothAdapter bluetoothAdapter;
     BluetoothDevice bluetoothDevice;
     BluetoothSocket btSocket;
@@ -219,7 +214,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     //Action methods
-
 
     public void deliverGiftsButton() {
         try {

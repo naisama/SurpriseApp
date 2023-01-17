@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothDevice;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ public class BluetoothData implements Serializable {
     String mac;
 
 
+    @SuppressLint("MissingPermission")
     public BluetoothData(BluetoothDevice device) {
         this.device = device;
         this.name = device.getName();
