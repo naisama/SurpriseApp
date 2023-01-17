@@ -36,8 +36,7 @@ public class MainActivity extends AppCompatActivity {
     //Request codes
     private static final int REQUEST_ENABLE_BT = 1;
     private static final int REQUEST_SELECT_DEVICE = 2;
-    private static final int RC_LOCATION = 3;
-    private static final int REQUEST_CAMERA = 4;
+
 
     //General
     TextView statusLabel;
@@ -225,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
     public void deliverGiftsButton() {
         try {
             speed = Integer.parseInt(speedLabel.getText().toString());
-            String tmpStr = "a";
+            String tmpStr = "a" + speed;
             byte bytes[] = tmpStr.getBytes();
             if (outputStream != null) outputStream.write(bytes);
             if (outputStream != null) outputStream.flush();
@@ -269,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
         String currentSpeed = speedLabel.getText().toString();
         speed = Integer.parseInt(currentSpeed);
 
-        if (speed < 9) speed++;
+        if (speed < 255) speed++;
         else {
             Log.d(TAG_APP, "Maximum speed reached");
             Toast.makeText(getApplicationContext(), "Maximum speed reached", Toast.LENGTH_SHORT).show();
@@ -283,7 +282,7 @@ public class MainActivity extends AppCompatActivity {
         String currentSpeed = speedLabel.getText().toString();
         speed = Integer.parseInt(currentSpeed);
 
-        if (speed > 1) speed--;
+        if (speed > 155) speed--; //TODO probar a que valor en ENA el motor ya no tira
         else {
             Log.d(TAG_APP, "Minimum speed reached");
             Toast.makeText(getApplicationContext(), "Minimun speed reached", Toast.LENGTH_SHORT).show();
