@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
         String currentSpeed = speedLabel.getText().toString();
         speed = Integer.parseInt(currentSpeed);
 
-        if (speed > 155) speed--; //TODO probar a que valor en ENA el motor ya no tira
+        if (speed > 155) speed--;
         else {
             Log.d(TAG_APP, "Minimum speed reached");
             Toast.makeText(getApplicationContext(), "Minimun speed reached", Toast.LENGTH_SHORT).show();
